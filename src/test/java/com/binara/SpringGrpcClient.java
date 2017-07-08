@@ -12,24 +12,30 @@ import io.grpc.StatusRuntimeException;
  */
 public class SpringGrpcClient {
 
-    public static final String AUTH_SERVER_URI = "http://localhost:8080/SpringSecurityOAuth2ORM/oauth/token";
+    public static final String AUTH_SERVER_URI = "http://localhost:8080/SpringSecurityOAuth2ORMgRPC/oauth/token";
 
     public static final String QPM_PASSWORD_GRANT = "?grant_type=password&username=def&password=456";
 
     public static final String QPM_ACCESS_TOKEN = "?access_token=";
 
-    private ManagedChannel channel;
-    private StudentGrpc.StudentBlockingStub blockingStub;
-
-
+//    private static final Logger LOGGER = Logger.getLogger(SpringGrpcClient.class.getName());
 
     public static void main(String[] args) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext(true).build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8081).usePlaintext(true).build();
         StudentGrpc.StudentBlockingStub blockingStub = StudentGrpc.newBlockingStub(channel);
 
-        StudentRequest request = StudentRequest.newBuilder().setId(2).build();
+        System.out.println();
+
+        for (int i=0; i<3; i++) {
+            fetchStudent(blockingStub, i);
+        }
+    }
+
+    private static void fetchStudent(StudentGrpc.StudentBlockingStub blockingStub, int id) {
+        StudentRequest request = StudentRequest.newBuilder().setId(id).build();
         try {
             StudentResponse response = blockingStub.getStudent(request);
+            System.out.println("[" + response.getId() + ", " + response.getName() + ", " + response.getAge() + "]");
         } catch (StatusRuntimeException e) {
             System.out.println(e.getStatus());
         }

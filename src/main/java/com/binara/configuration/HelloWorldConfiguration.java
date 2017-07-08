@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
+
 @ComponentScan(basePackages = "com.binara")
 public class HelloWorldConfiguration {
 
